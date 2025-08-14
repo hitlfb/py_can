@@ -39,6 +39,25 @@ def save_can_data(can_id, dlc, data):
     conn.commit()
     conn.close()
 
+
+conn = sqlite3.connect(DB_NAME)
+cursor = conn.cursor()
+
+def conn_data():
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+
+def close_data():
+    conn.close()
+
+def save_data(can_id, dlc, data):
+    # 插入数据
+    cursor.execute(f'''
+        INSERT INTO {TABLE_NAME} (timestamp, can_id, dlc, data)
+        VALUES (?, ?, ?, ?)
+    ''', (datetime.now(), can_id, dlc, data))
+    conn.commit()
+
 """
 # 初始化数据库
 init_database()

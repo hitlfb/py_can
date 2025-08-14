@@ -533,6 +533,7 @@ if __name__ == "__main__":
     print("channel handle:%d." %(chn_handle))
 
     #Send CAN Messages
+    """
     transmit_num = 10
     msgs = (ZCAN_Transmit_Data * transmit_num)()
     for i in range(transmit_num):
@@ -545,7 +546,7 @@ if __name__ == "__main__":
             msgs[i].frame.data[j] = j
     ret = zcanlib.Transmit(chn_handle, msgs, transmit_num)
     print("Tranmit Num: %d." % ret)
-    
+    """
 
 
     thread=threading.Thread(target=input_thread)
@@ -553,7 +554,7 @@ if __name__ == "__main__":
 
     # 初始化数据库
     sdata.init_database()
-
+    sdata.conn_data()
     #Receive Messages
     while True:
 
@@ -562,6 +563,7 @@ if __name__ == "__main__":
         if rcv_num:
             
             rcv_msg, rcv_num = zcanlib.Receive(chn_handle, rcv_num)
+            """
             for i in range(rcv_num):
                 print("[%d]:timestamps:%d,type:CAN, id:%s, dlc:%d, eff:%d, rtr:%d, data:%s" %(i, rcv_msg[i].timestamp, 
                       hex(rcv_msg[i].frame.can_id), rcv_msg[i].frame.can_dlc, 
@@ -570,12 +572,17 @@ if __name__ == "__main__":
                 sdata.save_can_data(rcv_msg[i].frame.can_id, rcv_msg[i].frame.can_dlc, 
                                     ''.join(hex(rcv_msg[i].frame.data[j])+ ' 'for j in range(rcv_msg[i].frame.can_dlc)))
                    
-            
+            """
+            print(rcv_num)
+            for i in range(rcv_num):
+                sdata.save_data(rcv_msg[i].frame.can_id, rcv_msg[i].frame.can_dlc, 
+                                    ''.join(hex(rcv_msg[i].frame.data[j])+ ' 'for j in range(rcv_msg[i].frame.can_dlc)))
+                
         if thread.is_alive() == False:
             break
             
 
-
+    sdata.close_data()
     #Close CAN 
     ret=zcanlib.ResetCAN(chn_handle)
     if ret==1:
